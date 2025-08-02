@@ -1,0 +1,56 @@
+   body {
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', sans-serif;
+            color: #f1f1f1;
+        }
+        .signup-card {
+            background: rgba(34, 34, 34, 0.97);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5);
+            padding: 2rem;
+            max-width: 400px;
+            margin: 3rem auto;
+            color: #f1f1f1;
+        }
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00c6ff;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .form-label {
+            color: #f1f1f1;
+        }
+        .form-control {
+            background-color: #232526;
+            color: #f1f1f1;
+            border: 1px solid #414345;
+        }
+        .form-control:focus {
+            border-color: #00c6ff;
+            box-shadow: 0 0 0 0.2rem rgba(0,198,255,.25);
+            background-color: #232526;
+            color: #f1f1f1;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #232526 0%, #00c6ff 100%);
+            border: none;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #00c6ff 0%, #232526 100%);
+        }
+        .form-text {
+            font-size: 0.95rem;
+            color: #00c6ff;
+        }
+        a {
+            color: #00c6ff;
+            text-decoration: underline;
+        }
+        .invalid-feedback {
+            color: #ff6b6b;
+        }
