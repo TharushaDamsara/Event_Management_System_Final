@@ -1,18 +1,16 @@
 package com.Ijse.EventEase.dto;
 
+import com.Ijse.EventEase.enums.Role;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@Data
-public class RegisterDTO {
+public class OrganizerDto {
     private Long id;
     private String name;
     private String email;
-    private String password;
-    private String role;
+    private Role role; // ORGANIZER / ATTENDEE
 }

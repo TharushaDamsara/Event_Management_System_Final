@@ -29,5 +29,13 @@ public class GlobelExceptionHandler {
     public ApiResponce handleEventNotFoundException(Exception e) {
         return new ApiResponce(404, e.getMessage(), false);
     }
+    @ExceptionHandler(DuplicateFeedbackException.class)
+    public ApiResponce handleDuplicateFeedbackException(Exception e) {
+        return new ApiResponce(409, e.getMessage(), false);
+    }
+    @ExceptionHandler(NotFoundException.class)
+    public ApiResponce handleNotFoundException(Exception e) {
+        return new ApiResponce(404, e.getMessage(), false);
+    }
 
 }

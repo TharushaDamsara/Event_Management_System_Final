@@ -5,6 +5,7 @@ import com.Ijse.EventEase.dto.EventDto;
 import com.Ijse.EventEase.exception.DuplicateEventException;
 import com.Ijse.EventEase.exception.EventNotFoundException;
 import com.Ijse.EventEase.service.EventService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class EventController {
 
     @GetMapping("/{email}")
     public ResponseEntity<ApiResponce> getEventByEmail(@PathVariable String email) {
+        System.out.println(email);
         try {
             ApiResponce response = eventService.getEventBYEmail(email);
             return ResponseEntity.ok(response);
@@ -30,7 +32,7 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ApiResponce> createEvent(@RequestBody EventDto eventDto) {
+    public ResponseEntity<ApiResponce> createEvent(@Valid @RequestBody EventDto eventDto) {
         try {
             ApiResponce response = eventService.createEvent(eventDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(response); // 201 Created
@@ -41,7 +43,7 @@ public class EventController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<ApiResponce> updateEvent(@RequestBody EventDto eventDto) {
+    public ResponseEntity<ApiResponce> updateEvent(@Valid @RequestBody EventDto eventDto) {
         try {
             ApiResponce response = eventService.updateEvent(eventDto);
             return ResponseEntity.ok(response);

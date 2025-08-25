@@ -1,7 +1,6 @@
 package com.Ijse.EventEase.service.impl;
 
-import com.Ijse.EventEase.dto.ApiResponce;
-import com.Ijse.EventEase.dto.EventDto;
+import com.Ijse.EventEase.dto.*;
 import com.Ijse.EventEase.entity.Event;
 import com.Ijse.EventEase.exception.DuplicateEventException;
 import com.Ijse.EventEase.exception.EventNotFoundException;
@@ -10,6 +9,7 @@ import com.Ijse.EventEase.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,6 +40,7 @@ public class EventServiceImpl implements EventService {
                 .eventTime(eventDto.getEventTime())
                 .bannerImageUrl(eventDto.getBannerImageUrl())
                 .maxAttendees(eventDto.getMaxAttendees())
+                .organizer(eventDto.getOrganizer())
                 .build();
     }
 
@@ -53,12 +54,13 @@ public class EventServiceImpl implements EventService {
                 .eventTime(eventDto.getEventTime())
                 .bannerImageUrl(eventDto.getBannerImageUrl())
                 .maxAttendees(eventDto.getMaxAttendees())
+                .organizer(eventDto.getOrganizer())
                 .build();
     }
 
     @Override
     public ApiResponce updateEvent(EventDto eventDto) throws EventNotFoundException {
-        if (!eventRepository.findEventById(eventDto.getId()).isPresent()) {
+        if (eventRepository.findEventById(eventDto.getId()).isEmpty()) {
             throw new EventNotFoundException("Event not found");
         }
         eventRepository.save(mapToExistingEvent(eventDto));
@@ -67,7 +69,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ApiResponce deleteEvent(Long eventId) throws EventNotFoundException {
-        if (!eventRepository.findEventById(eventId).isPresent()) {
+        if (eventRepository.findEventById(eventId).isEmpty()) {
             throw new EventNotFoundException("Event not found");
         }
         eventRepository.deleteById(eventId);
@@ -76,10 +78,33 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public ApiResponce getEventBYEmail(String email) throws EventNotFoundException {
-        Optional<Event> eventOpt = eventRepository.findByOrganizerEmail(email);
-        if (!eventOpt.isPresent()) {
+        List<Event> events = eventRepository.findEventsByOrganizerEmail(email);
+
+        if (events.isEmpty()) {
             throw new EventNotFoundException("No events found for this email");
         }
-        return new ApiResponce(200, "Event found successfully", true);
+
+        // Map to DTOs if you don’t want to expose entities directly
+        List<EventResponseDto> eventDtos = events.stream()
+                .map(e -> new EventResponseDto(
+                        e.getId(),
+                        e.getTitle(),
+                        e.getDescription(),
+                        e.getLocation(),
+                        e.getEventDate(),
+                        e.getEventTime(),
+                        e.getBannerImageUrl(),
+                        e.getMaxAttendees(),
+                        new OrganizerDto(
+                                e.getOrganizer().getId(),
+                                e.getOrganizer().getName(),
+                                e.getOrganizer().getEmail(),
+                                e.getOrganizer().getRole()
+                        )
+                ))
+                .toList();
+
+        return new ApiResponce(200, "Events found successfully", eventDtos);
     }
+
 }
