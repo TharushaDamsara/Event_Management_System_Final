@@ -1,6 +1,6 @@
 package com.Ijse.EventEase.dto;
 
-import com.Ijse.EventEase.entity.User;
+
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -44,5 +44,5 @@ public class EventDto {
     @Positive(message = "Max attendees must be greater than 0")
     private int maxAttendees;
 
-    private User organizer;
+    private Long organizerId;
 }

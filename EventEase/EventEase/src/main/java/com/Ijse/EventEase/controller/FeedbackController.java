@@ -25,6 +25,8 @@ public class FeedbackController {
             return ResponseEntity.status(HttpStatus.CREATED).body(apiResponce);
         } catch (DuplicateFeedbackException e) {
            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ApiResponce(409, e.getMessage(), false));
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponce(404, e.getMessage(), false));
         }
     }
 

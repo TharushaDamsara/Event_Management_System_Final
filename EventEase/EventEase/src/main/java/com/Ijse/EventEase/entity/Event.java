@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name="event")
@@ -27,6 +28,13 @@ public class Event {
     private String bannerImageUrl;
     private int maxAttendees;
     @ManyToOne
+    @JoinColumn(name = "organizer_id", nullable = false)
     private User organizer;
+
+    @OneToMany(mappedBy = "event")
+    private List<Registration> registrations;
+
+    @OneToMany(mappedBy = "event")
+    private List<Feedback> feedbacks;
 }
 

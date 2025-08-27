@@ -7,7 +7,7 @@ import com.Ijse.EventEase.exception.DuplicateFeedbackException;
 import com.Ijse.EventEase.exception.NotFoundException;
 
 public interface FeedbackService {
-   ApiResponce addFeedback(FeedbackDto feedbackDto) throws DuplicateFeedbackException;
+   ApiResponce addFeedback(FeedbackDto feedbackDto) throws DuplicateFeedbackException, NotFoundException;
    ApiResponce getAllFeedbackbyEventId(Long eventId) throws NotFoundException;
     ApiResponce getAllFeedbackbyAttendeeEmail(String email) throws NotFoundException;
 }
