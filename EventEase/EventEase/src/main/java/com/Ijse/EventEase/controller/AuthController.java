@@ -1,8 +1,7 @@
 package com.Ijse.EventEase.controller;
 
-import com.Ijse.EventEase.dto.ApiResponce;
-import com.Ijse.EventEase.dto.AuthDTO;
-import com.Ijse.EventEase.dto.RegisterDTO;
+import com.Ijse.EventEase.dto.*;
+import com.Ijse.EventEase.enums.Role;
 import com.Ijse.EventEase.exception.EmailDuplicateException;
 import com.Ijse.EventEase.exception.UserEmailNotFoundException;
 import com.Ijse.EventEase.service.UserService;
@@ -14,54 +13,40 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-
 public class AuthController {
 
- private final UserService authService;
-
+    private final UserService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponce> registerUser(
-            @RequestBody RegisterDTO registerDTO){
+    public ResponseEntity<ApiResponce> registerUser(@RequestBody RegisterDTO registerDTO){
         try {
             return ResponseEntity.ok(
-                    new ApiResponce(
-                            200,
-                            "User registered successfully",
-                            authService.registerUser(registerDTO)
-                    )
+                    new ApiResponce(200, "User registered successfully", authService.registerUser(registerDTO))
             );
         } catch (EmailDuplicateException e) {
-            return ResponseEntity.ok(
-                    new ApiResponce(
-                            400,
-                            e.getMessage(),
-                            false
-                    )
-            );
+            return ResponseEntity.status(400)
+                    .body(new ApiResponce(400, e.getMessage(), false));
         }
     }
+
     @PostMapping("/login")
     public ResponseEntity<ApiResponce> login(@RequestBody AuthDTO authDTO){
         try {
-            return ResponseEntity.ok(new ApiResponce(200,
-                    "OK",authService.authenticate(authDTO)));
-        } catch (UserEmailNotFoundException e) {
-            return ResponseEntity.ok(
-                    new ApiResponce(
-                            404,
-                            e.getMessage(),
-                            false
-                    )
-            );
+            // Ensure role is uppercase
+            String role = String.valueOf(authDTO.getRole());
+            authDTO.setRole(Role.valueOf(role));
+
+            // Authenticate user (returns token or user info)
+            AuthResponceDto authenticate = authService.authenticate(authDTO);
+
+            return ResponseEntity.ok(new ApiResponce(200, "OK", authenticate));
+
+        }catch (UserEmailNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
         } catch (Exception e) {
-            return ResponseEntity.ok(
-                    new ApiResponce(
-                            400,
-                            "Invalid credentials",
-                            false
-                    )
-            );
+            return ResponseEntity.status(401) // unauthorized
+                    .body(new ApiResponce(401, "Invalid credentials", false));
         }
     }
 }

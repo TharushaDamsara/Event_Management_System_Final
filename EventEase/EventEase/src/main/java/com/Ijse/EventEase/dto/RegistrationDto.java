@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 
 public class RegistrationDto {
     private Long id;
-    private AttendeeDto attendee;
-    private EventDto event;
+    private long attendeeId;
+    private long eventId;
     private LocalDateTime registrationTime;
     private String qrCodePath;
     private boolean emailSent;
