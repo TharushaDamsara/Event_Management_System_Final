@@ -8,33 +8,37 @@ import java.time.LocalTime;
 import java.util.List;
 
 @Entity
-@Table(name="event")
-@Builder
+@Table(name = "events")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@Builder
+public class Event{
 
-public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String description;
     private String location;
     private LocalDate eventDate;
     private LocalTime eventTime;
-    private String bannerImageUrl;
     private int maxAttendees;
+
     @ManyToOne
-    @JoinColumn(name = "organizer_id", nullable = false)
+    @JoinColumn(name = "organizer_id")
     private User organizer;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Ticket> tickets; // one-to-many tickets
 
     @OneToMany(mappedBy = "event")
     private List<Registration> registrations;
 
     @OneToMany(mappedBy = "event")
     private List<Feedback> feedbacks;
+
 }
 

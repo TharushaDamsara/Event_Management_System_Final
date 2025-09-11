@@ -1,7 +1,9 @@
 package com.Ijse.EventEase.service.impl;
 
-import com.Ijse.EventEase.dto.*;
+import com.Ijse.EventEase.dto.ApiResponce;
+import com.Ijse.EventEase.dto.EventDto;
 import com.Ijse.EventEase.entity.Event;
+import com.Ijse.EventEase.entity.Ticket;
 import com.Ijse.EventEase.entity.User;
 import com.Ijse.EventEase.exception.DuplicateEventException;
 import com.Ijse.EventEase.exception.EventNotFoundException;
@@ -10,9 +12,10 @@ import com.Ijse.EventEase.repository.UserRepository;
 import com.Ijse.EventEase.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,66 +25,86 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public ApiResponce createEvent(EventDto eventDto) throws DuplicateEventException {
-        // Check for duplicate by title
         if (eventRepository.findByTitle(eventDto.getTitle()).isPresent()) {
             throw new DuplicateEventException("Event with this title already exists");
         }
 
-        // ✅ fetch organizer
         User organizer = userRepository.findById(eventDto.getOrganizerId())
                 .orElseThrow(() -> new RuntimeException("Organizer not found"));
 
-        Event newEvent = mapToNewEvent(eventDto, organizer);
-        eventRepository.save(newEvent);
-
-        return new ApiResponce(201, "Event created successfully", true);
-    }
-
-    private Event mapToNewEvent(EventDto eventDto, User organizer) {
-        return Event.builder()
+        Event event = Event.builder()
                 .title(eventDto.getTitle())
                 .description(eventDto.getDescription())
                 .location(eventDto.getLocation())
                 .eventDate(eventDto.getEventDate())
                 .eventTime(eventDto.getEventTime())
-                .bannerImageUrl(eventDto.getBannerImageUrl())
                 .maxAttendees(eventDto.getMaxAttendees())
-                .organizer(organizer) // ✅ use actual User
+                .organizer(organizer)
                 .build();
-    }
 
-    private Event mapToExistingEvent(EventDto eventDto, User organizer) {
-        return Event.builder()
-                .id(eventDto.getId()) // keep ID for update
-                .title(eventDto.getTitle())
-                .description(eventDto.getDescription())
-                .location(eventDto.getLocation())
-                .eventDate(eventDto.getEventDate())
-                .eventTime(eventDto.getEventTime())
-                .bannerImageUrl(eventDto.getBannerImageUrl())
-                .maxAttendees(eventDto.getMaxAttendees())
-                .organizer(organizer) // ✅ use actual User
-                .build();
+        // map tickets
+        List<Ticket> tickets = eventDto.getTickets().stream().map(t -> {
+            Ticket ticket = Ticket.builder()
+                    .name(t.getName())
+                    .price(t.getPrice())
+                    .quantity(t.getQuantity())
+                    .description(t.getDescription())
+                    .benefits(t.getBenefits())
+                    .event(event)
+                    .build();
+            return ticket;
+        }).collect(Collectors.toList());
+
+        event.setTickets(tickets);
+
+        eventRepository.save(event); // saves both event + tickets
+
+        return new ApiResponce(201, "Event with tickets created successfully", true);
     }
 
     @Override
-    public ApiResponce updateEvent(EventDto eventDto) throws EventNotFoundException {
+    @Transactional
+    public ApiResponce updateEvent(EventDto eventDto) throws  EventNotFoundException {
         Event existing = eventRepository.findEventById(eventDto.getId())
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
-        // ✅ fetch organizer
         User organizer = userRepository.findById(eventDto.getOrganizerId())
                 .orElseThrow(() -> new RuntimeException("Organizer not found"));
 
-        Event updatedEvent = mapToExistingEvent(eventDto, organizer);
-        eventRepository.save(updatedEvent);
+        existing.setTitle(eventDto.getTitle());
+        existing.setDescription(eventDto.getDescription());
+        existing.setLocation(eventDto.getLocation());
+        existing.setEventDate(eventDto.getEventDate());
+        existing.setEventTime(eventDto.getEventTime());
+        existing.setMaxAttendees(eventDto.getMaxAttendees());
+        existing.setOrganizer(organizer);
 
-        return new ApiResponce(200, "Event updated successfully", true);
+        // update tickets
+        existing.getTickets().clear();
+        List<Ticket> tickets = eventDto.getTickets().stream().map(t -> {
+            Ticket ticket = Ticket.builder()
+                    .name(t.getName())
+                    .price(t.getPrice())
+                    .quantity(t.getQuantity())
+                    .description(t.getDescription())
+                    .benefits(t.getBenefits())
+                    .event(existing)
+                    .build();
+            return ticket;
+        }).collect(Collectors.toList());
+
+        existing.setTickets(tickets);
+
+        eventRepository.save(existing);
+
+        return new ApiResponce(200, "Event with tickets updated successfully", true);
     }
 
     @Override
-    public ApiResponce deleteEvent(Long eventId) throws EventNotFoundException {
+    @Transactional
+    public ApiResponce deleteEvent(Long eventId) throws  EventNotFoundException {
         Event event = eventRepository.findEventById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found"));
 
@@ -90,32 +113,11 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public ApiResponce getEventBYEmail(String email) throws EventNotFoundException {
+    public ApiResponce getEventBYEmail(String email) throws  EventNotFoundException {
         List<Event> events = eventRepository.findEventsByOrganizerEmail(email);
-
         if (events.isEmpty()) {
             throw new EventNotFoundException("No events found for this email");
         }
-
-        List<EventResponseDto> eventDtos = events.stream()
-                .map(e -> new EventResponseDto(
-                        e.getId(),
-                        e.getTitle(),
-                        e.getDescription(),
-                        e.getLocation(),
-                        e.getEventDate(),
-                        e.getEventTime(),
-                        e.getBannerImageUrl(),
-                        e.getMaxAttendees(),
-                        new OrganizerDto(
-                                e.getOrganizer().getId(),
-                                e.getOrganizer().getName(),
-                                e.getOrganizer().getEmail(),
-                                e.getOrganizer().getRole()
-                        )
-                ))
-                .toList();
-
-        return new ApiResponce(200, "Events found successfully", eventDtos);
+        return new ApiResponce(200, "Events found", events);
     }
 }

@@ -5,7 +5,879 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EventEase - Organizer Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../css/OrganizerDash.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 20px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 20px;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 25px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .welcome-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .quick-stat {
+            text-align: center;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+        }
+
+        .quick-stat:hover {
+            transform: translateY(-2px);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Analytics Dashboard */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.02), rgba(118, 75, 162, 0.02));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: #4CAF50;
+        }
+
+        .stat-change.negative {
+            color: #f44336;
+        }
+
+        /* Main Content Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        /* Event Creation Form */
+        .event-form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            padding: 15px 18px;
+            border: 2px solid rgba(102, 126, 234, 0.15);
+            border-radius: 15px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        /* Events Grid */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .event-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .event-status.active {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .event-status.upcoming {
+            background: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+        }
+
+        .event-status.completed {
+            background: rgba(158, 158, 158, 0.1);
+            color: #9E9E9E;
+        }
+
+        .event-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #333;
+            padding-right: 80px;
+        }
+
+        .event-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .event-description {
+            color: #777;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .event-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+        }
+
+        .event-stat {
+            text-align: center;
+        }
+
+        .event-stat-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 4px;
+        }
+
+        .event-stat-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #FF9800, #f57c00);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .chart-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #667eea;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Recent Activity */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            transition: transform 0.2s ease;
+        }
+
+        .activity-item:hover {
+            transform: translateX(5px);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            color: #666;
+            font-size: 12px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .event-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dashboard-card, .event-card, .stat-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #f44336;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Ticket Section Styles */
+        .ticket-section {
+            margin-top: 20px;
+            border-top: 2px solid rgba(102, 126, 234, 0.1);
+            padding-top: 20px;
+        }
+
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ticket-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .ticket-item {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 15px;
+            position: relative;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .ticket-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .ticket-type {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .ticket-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .ticket-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .ticket-full-width {
+            grid-column: span 2;
+        }
+
+        .ticket-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .benefit-tag {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .benefit-tag i {
+            cursor: pointer;
+            color: #f44336;
+        }
+
+        .btn-tiny {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            transform: translateY(30px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .benefit-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .benefit-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .benefit-option:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .benefit-option.selected {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #667eea;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .ticket-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .ticket-full-width {
+                grid-column: span 1;
+            }
+            
+            .benefit-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -157,6 +1029,25 @@
                             <input type="number" class="form-input" id="eventFee" placeholder="0" min="0" step="0.01">
                         </div>
                     </div>
+                    
+                    <!-- Ticket Section -->
+                    <div class="ticket-section">
+                        <div class="ticket-header">
+                            <h3 style="margin: 0; color: #333;">Ticket Types</h3>
+                            <button type="button" class="btn btn-primary btn-sm" id="addTicketBtn">
+                                <i class="fas fa-plus"></i> Add Ticket Type
+                            </button>
+                        </div>
+                        
+                        <div class="ticket-list" id="ticketList">
+                            <!-- Tickets will be added here dynamically -->
+                            <div class="ticket-empty" style="text-align: center; padding: 20px; color: #666;">
+                                <i class="fas fa-ticket-alt" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                                <p>No ticket types added yet. Click "Add Ticket Type" to get started.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <button type="submit" class="btn btn-primary" style="width: 100%;">
                         <i class="fas fa-rocket"></i> Create Event
                     </button>
@@ -336,52 +1227,252 @@
         </div>
     </div>
 
+    <!-- Add Ticket Modal -->
+    <div class="modal-overlay" id="ticketModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add Ticket Type</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <form id="ticketForm">
+                <div class="form-group">
+                    <label class="form-label">Ticket Name</label>
+                    <input type="text" class="form-input" id="ticketName" placeholder="e.g., General Admission, VIP" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Price ($)</label>
+                        <input type="number" class="form-input" id="ticketPrice" placeholder="0.00" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity Available</label>
+                        <input type="number" class="form-input" id="ticketQuantity" placeholder="100" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="ticketDescription" placeholder="Describe what this ticket includes..." rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Benefits/Features</label>
+                    <div class="benefit-list">
+                        <div class="benefit-option" data-benefit="Early Access">
+                            <input type="checkbox" id="benefit1" class="benefit-checkbox">
+                            <label for="benefit1">Early Access</label>
+                        </div>
+                        <div class="benefit-option" data-benefit="VIP Seating">
+                            <input type="checkbox" id="benefit2" class="benefit-checkbox">
+                            <label for="benefit2">VIP Seating</label>
+                        </div>
+                        <div class="benefit-option" data-benefit="Refreshments">
+                            <input type="checkbox" id="benefit3" class="benefit-checkbox">
+                            <label for="benefit3">Refreshments</label>
+                        </div>
+                        <div class="benefit-option" data-benefit="Swag Bag">
+                            <input type="checkbox" id="benefit4" class="benefit-checkbox">
+                            <label for="benefit4">Swag Bag</label>
+                        </div>
+                        <div class="benefit-option" data-benefit="Networking Session">
+                            <input type="checkbox" id="benefit5" class="benefit-checkbox">
+                            <label for="benefit5">Networking Session</label>
+                        </div>
+                        <div class="benefit-option" data-benefit="Backstage Pass">
+                            <input type="checkbox" id="benefit6" class="benefit-checkbox">
+                            <label for="benefit6">Backstage Pass</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Add Ticket Type
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // Set current date as default for event creation
-        document.addEventListener('DOMContentLoaded', function() {
+        // jQuery Document Ready
+        $(document).ready(function() {
+            // Set current date as default for event creation
             const now = new Date();
             now.setHours(now.getHours() + 1); // Set to next hour
-            document.getElementById('eventDate').value = now.toISOString().slice(0, 16);
-        });
-
-        // Event Form Submission
-        document.getElementById('eventForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+            $('#eventDate').val(now.toISOString().slice(0, 16));
             
-            const formData = {
-                title: document.getElementById('eventTitle').value,
-                description: document.getElementById('eventDesc').value,
-                date: document.getElementById('eventDate').value,
-                duration: document.getElementById('eventDuration').value,
-                location: document.getElementById('eventLocation').value,
-                maxAttendees: document.getElementById('maxAttendees').value,
-                category: document.getElementById('eventCategory').value,
-                fee: document.getElementById('eventFee').value
-            };
+            // Initialize ticket counter
+            let ticketCounter = 0;
+            
+            // Open Add Ticket Modal
+            $('#addTicketBtn').on('click', function() {
+                $('#ticketModal').addClass('active');
+            });
+            
+            // Close Modal
+            $('#closeModal').on('click', function() {
+                $('#ticketModal').removeClass('active');
+                $('#ticketForm')[0].reset();
+            });
+            
+            // Benefit option selection
+            $('.benefit-option').on('click', function() {
+                $(this).toggleClass('selected');
+                const checkbox = $(this).find('.benefit-checkbox');
+                checkbox.prop('checked', !checkbox.prop('checked'));
+            });
+            
+            // Ticket Form Submission
+            $('#ticketForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Get form values
+                const name = $('#ticketName').val();
+                const price = $('#ticketPrice').val();
+                const quantity = $('#ticketQuantity').val();
+                const description = $('#ticketDescription').val();
+                
+                // Get selected benefits
+                const benefits = [];
+                $('.benefit-checkbox:checked').each(function() {
+                    benefits.push($(this).closest('.benefit-option').data('benefit'));
+                });
+                
+                // Create ticket object
+                const ticket = {
+                    id: 'ticket_' + ticketCounter++,
+                    name,
+                    price,
+                    quantity,
+                    description,
+                    benefits
+                };
+                
+                // Add ticket to the list
+                addTicketToList(ticket);
+                
+                // Close modal and reset form
+                $('#ticketModal').removeClass('active');
+                $(this)[0].reset();
+                $('.benefit-option').removeClass('selected');
+            });
+            
+            // Event Form Submission
+            $('#eventForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // Get all tickets
+                const tickets = [];
+                $('.ticket-item').each(function() {
+                    const id = $(this).data('id');
+                    const name = $(this).find('.ticket-type').text();
+                    const price = $(this).find('.ticket-price').text().replace('$', '');
+                    const quantity = $(this).find('.ticket-quantity').text();
+                    const description = $(this).find('.ticket-description').text();
+                    
+                    // Get benefits
+                    const benefits = [];
+                    $(this).find('.benefit-tag').each(function() {
+                        benefits.push($(this).text().replace('×', '').trim());
+                    });
+                    
+                    tickets.push({
+                        id, name, price, quantity, description, benefits
+                    });
+                });
+                
+                const formData = {
+                    title: $('#eventTitle').val(),
+                    description: $('#eventDesc').val(),
+                    date: $('#eventDate').val(),
+                    duration: $('#eventDuration').val(),
+                    location: $('#eventLocation').val(),
+                    maxAttendees: $('#maxAttendees').val(),
+                    category: $('#eventCategory').val(),
+                    fee: $('#eventFee').val(),
+                    tickets: tickets
+                };
 
-            // Show loading state
-            const submitBtn = e.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<span class="spinner"></span> Creating Event...';
-            submitBtn.disabled = true;
+                // Show loading state
+                const submitBtn = $(this).find('button[type="submit"]');
+                const originalText = submitBtn.html();
+                submitBtn.html('<span class="spinner"></span> Creating Event...');
+                submitBtn.prop('disabled', true);
 
-            // Simulate API call
-            setTimeout(() => {
-                alert('Event created successfully!');
-                console.log('Event Data:', formData);
+                // Simulate API call
+                setTimeout(() => {
+                    alert('Event created successfully with ' + tickets.length + ' ticket types!');
+                    console.log('Event Data:', formData);
+                    
+                    // Reset form
+                    $(this)[0].reset();
+                    $('#eventDate').val(new Date(Date.now() + 3600000).toISOString().slice(0, 16));
+                    
+                    // Clear tickets
+                    $('#ticketList').html('<div class="ticket-empty" style="text-align: center; padding: 20px; color: #666;">' +
+                        '<i class="fas fa-ticket-alt" style="font-size: 2rem; margin-bottom: 10px;"></i>' +
+                        '<p>No ticket types added yet. Click "Add Ticket Type" to get started.</p></div>');
+                    
+                    // Restore button
+                    submitBtn.html(originalText);
+                    submitBtn.prop('disabled', false);
+                }, 2000);
+            });
+            
+            // Function to add ticket to the list
+            function addTicketToList(ticket) {
+                // Remove empty state if it exists
+                if ($('#ticketList .ticket-empty').length) {
+                    $('#ticketList').empty();
+                }
                 
-                // Reset form
-                e.target.reset();
-                document.getElementById('eventDate').value = new Date(Date.now() + 3600000).toISOString().slice(0, 16);
+                // Create benefits HTML
+                let benefitsHtml = '';
+                if (ticket.benefits && ticket.benefits.length > 0) {
+                    benefitsHtml = '<div class="ticket-benefits">';
+                    ticket.benefits.forEach(benefit => {
+                        benefitsHtml += `<span class="benefit-tag">${benefit} <i class="fas fa-times" onclick="removeBenefit(this)"></i></span>`;
+                    });
+                    benefitsHtml += '</div>';
+                }
                 
-                // Restore button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
+                // Create ticket HTML
+                const ticketHtml = `
+                    <div class="ticket-item" data-id="${ticket.id}">
+                        <div class="ticket-item-header">
+                            <div class="ticket-type">${ticket.name}</div>
+                            <div class="ticket-actions">
+                                <button type="button" class="btn btn-danger btn-tiny" onclick="removeTicket('${ticket.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ticket-details">
+                            <div><strong>Price:</strong> $<span class="ticket-price">${ticket.price}</span></div>
+                            <div><strong>Quantity:</strong> <span class="ticket-quantity">${ticket.quantity}</span></div>
+                            <div class="ticket-description" style="display: none;">${ticket.description}</div>
+                        </div>
+                        ${benefitsHtml}
+                    </div>
+                `;
                 
-                // In real implementation, redirect or update UI
-                // window.location.reload();
-            }, 2000);
+                // Add ticket to list
+                $('#ticketList').append(ticketHtml);
+            }
         });
+        
+        // Remove ticket function
+        function removeTicket(ticketId) {
+            $(`[data-id="${ticketId}"]`).remove();
+            
+            // If no tickets left, show empty state
+            if ($('#ticketList').children().length === 0) {
+                $('#ticketList').html('<div class="ticket-empty" style="text-align: center; padding: 20px; color: #666;">' +
+                    '<i class="fas fa-ticket-alt" style="font-size: 2rem; margin-bottom: 10px;"></i>' +
+                    '<p>No ticket types added yet. Click "Add Ticket Type" to get started.</p></div>');
+            }
+        }
+        
+        // Remove benefit function
+        function removeBenefit(element) {
+            $(element).parent().remove();
+        }
 
         // Filter Events
         function filterEvents(filter) {
@@ -418,7 +1509,7 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 alert('Logging out...');
-                // In real implementation: window.location.href = '/login';
+              window.location.href = '/index.html'; // Redirect to login page
             }
         }
 
@@ -547,7 +1638,12 @@
                 const form = document.getElementById('eventForm');
                 if (form) form.dispatchEvent(new Event('submit'));
             }
-        });
+            
+            // Escape to close modal
+            if (e.key === 'Escape') {
+                $('#ticketModal').removeClass('active');
+            }
+        }); 
 
         // Auto-save draft functionality
         let draftSaveTimer;
@@ -569,6 +1665,28 @@
                     draftData[input.id] = input.value;
                 }
             });
+            
+            // Save ticket data too
+            const tickets = [];
+            $('.ticket-item').each(function() {
+                const id = $(this).data('id');
+                const name = $(this).find('.ticket-type').text();
+                const price = $(this).find('.ticket-price').text().replace('$', '');
+                const quantity = $(this).find('.ticket-quantity').text();
+                const description = $(this).find('.ticket-description').text();
+                
+                // Get benefits
+                const benefits = [];
+                $(this).find('.benefit-tag').each(function() {
+                    benefits.push($(this).text().replace('×', '').trim());
+                });
+                
+                tickets.push({
+                    id, name, price, quantity, description, benefits
+                });
+            });
+            
+            draftData.tickets = tickets;
             
             if (Object.keys(draftData).length > 0) {
                 // In real implementation, save to backend or localStorage
@@ -628,137 +1746,4 @@
         document.head.appendChild(style);
     </script>
 </body>
-    </html>
-    
-    <primary "btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-secondary btn-sm">
-                            <i class="fas fa-chart-bar"></i> Analytics
-                        </button>
-                        <button class="btn btn-success btn-sm">
-                            <i class="fas fa-qrcode"></i> QR Codes
-                        </button>
-                    </div>
-                </div>
-
-                <div class="event-card">
-                    <div class="event-status upcoming">Upcoming</div>
-                    <h3 class="event-title">Digital Marketing Workshop</h3>
-                    <div class="event-meta">
-                        <span><i class="fas fa-calendar"></i> Sep 5, 2025</span>
-                        <span><i class="fas fa-map-marker-alt"></i> Business Hub</span>
-                        <span><i class="fas fa-clock"></i> 4 hours</span>
-                    </div>
-                    <p class="event-description">Learn effective digital marketing strategies from industry professionals. Hands-on workshops covering SEO, social media, and content marketing.</p>
-                    <div class="event-stats">
-                        <div class="event-stat">
-                            <div class="event-stat-number">45/100</div>
-                            <div class="event-stat-label">Registered</div>
-                        </div>
-                        <div class="event-stat">
-                            <div class="event-stat-number">-</div>
-                            <div class="event-stat-label">Rating</div>
-                        </div>
-                        <div class="event-stat">
-                            <div class="event-stat-number">$675</div>
-                            <div class="event-stat-label">Revenue</div>
-                        </div>
-                    </div>
-                    <div class="event-actions">
-                        <button class="btn btn-primary btn-sm">
-                            <i class="fas fa-edit"></i> Edit
-                        </button>
-                        <button class="btn btn-secondary btn-sm">
-                            <i class="fas fa-chart-bar"></i> Analytics
-                        </button>
-                        <button class="btn btn-success btn-sm">
-                            <i class="fas fa-qrcode"></i> QR Codes
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f7fa;
-            color: #333;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #fff;
-            padding: 15px 20px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-buttons {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            margin-right: 20px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #667eea;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-right: 10px;
-        }
-
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 600;
-            color: #333;
-        }
-        .welcome-subtitle {
-            font-size: 18px;
-            color: #666;
-            margin-top: 5px;
-        }
-        .quick-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 30px;
-        }
-        \.quick-stat {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            flex: 1;
-            margin: 0 10px;
-        }
+</html>
