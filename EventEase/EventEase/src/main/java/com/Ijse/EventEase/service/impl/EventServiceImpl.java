@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,4 +121,30 @@ public class EventServiceImpl implements EventService {
         }
         return new ApiResponce(200, "Events found", events);
     }
+
+    @Override
+    public ApiResponce getOrganizerEventBYDate(LocalDate date, String email) throws Exception, EventNotFoundException {
+        List<Event> eventsByEventDateAndOrganizerEmail = eventRepository.findEventsByEventDateAndOrganizerEmail(date, email);
+        if (eventsByEventDateAndOrganizerEmail.isEmpty()) {
+            throw new EventNotFoundException("No your events found for this date");
+        }
+        return new ApiResponce(200, "Events found", eventsByEventDateAndOrganizerEmail);
+    }
+
+    @Override
+    public ApiResponce getAllEventBYDate(LocalDate date) throws Exception, EventNotFoundException {
+        List<Event> eventsByEventDate = eventRepository.findEventsByEventDate(date);
+        if (eventsByEventDate.isEmpty()) {
+            throw new EventNotFoundException("No events found for this date");
+        }
+        return new ApiResponce(200, "Events found", eventsByEventDate);
+    }
+
+    @Override
+    public ApiResponce countEventsByOrganizerEmail(String email) throws Exception, EventNotFoundException {
+        Long l = eventRepository.countEventsByOrganizerEmail(email);
+        return new ApiResponce(200, "Events count", l);
+    }
+
+
 }

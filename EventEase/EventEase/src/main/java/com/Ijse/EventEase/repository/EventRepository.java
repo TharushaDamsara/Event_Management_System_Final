@@ -7,16 +7,26 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
     Optional<Event> findEventById(Long id);
-
     @Query("SELECT e FROM Event e WHERE e.organizer.email = :email")
     List<Event> findEventsByOrganizerEmail(@Param("email") String email);
-
     Optional<Event> findByTitle(String title);
+
+    @Query("SELECT e FROM Event e WHERE e.eventDate = :eventDate AND e.organizer.email = :email")
+    List<Event> findEventsByEventDateAndOrganizerEmail(@Param("eventDate") LocalDate eventDate,
+                                                       @Param("email") String email);
+
+    @Query("SELECT e FROM Event e WHERE e.eventDate = :eventDate")
+    List<Event> findEventsByEventDate(@Param("eventDate") LocalDate eventDate);
+
+
+    Long countEventsByOrganizerEmail(@Param("email") String email);
+
 
 }

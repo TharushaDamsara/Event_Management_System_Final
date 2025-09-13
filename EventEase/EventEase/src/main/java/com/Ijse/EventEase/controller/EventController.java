@@ -7,8 +7,12 @@ import com.Ijse.EventEase.exception.EventNotFoundException;
 import com.Ijse.EventEase.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+
 @RestController
 @RequestMapping("/api/event")
 @RequiredArgsConstructor
@@ -56,6 +60,43 @@ public class EventController {
             ApiResponce response = eventService.getEventBYEmail(email);
             return ResponseEntity.ok(response);
         } catch (Exception | EventNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
+        }
+    }
+
+    @GetMapping("/count/{email}")
+    public ResponseEntity<ApiResponce> countEventsByOrganizerEmail(@PathVariable String email) {
+        try {
+            ApiResponce response = eventService.countEventsByOrganizerEmail(email);
+            return ResponseEntity.ok(response);
+        } catch (Exception | EventNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
+        }
+    }
+
+    @GetMapping("/bydateandemail")
+    public ResponseEntity<ApiResponce> getEventsByDateAndEmail(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam("email") String email) {
+        try {
+            ApiResponce response = eventService.getOrganizerEventBYDate(date, email);
+            return ResponseEntity.ok(response);
+        } catch (Exception | EventNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
+        }
+    }
+
+
+    @GetMapping("/eventbydate")
+    public ResponseEntity<ApiResponce> getAllEventByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            ApiResponce response = eventService.getAllEventBYDate(date);
+            return ResponseEntity.ok(response);
+        } catch (EventNotFoundException | Exception e) {
             return ResponseEntity.status(404)
                     .body(new ApiResponce(404, e.getMessage(), false));
         }
