@@ -7,6 +7,7 @@ import com.Ijse.EventEase.exception.EventNotFoundException;
 import com.Ijse.EventEase.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 @RequestMapping("/api/event")
 @RequiredArgsConstructor
 @CrossOrigin
+@Slf4j
 public class EventController {
 
     private final EventService eventService;

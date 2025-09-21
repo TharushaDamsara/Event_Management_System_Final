@@ -6,6 +6,7 @@ import com.Ijse.EventEase.exception.EmailDuplicateException;
 import com.Ijse.EventEase.exception.UserEmailNotFoundException;
 import com.Ijse.EventEase.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @CrossOrigin
+@Slf4j
 public class AuthController {
 
     private final UserService authService;

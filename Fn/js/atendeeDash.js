@@ -14,19 +14,14 @@ $(document).ready(function () {
 
     // 🔹 Load user profile dynamically
     function getInitials(name) {
-        return name
-            ? name.split(" ").map(n => n[0]).join("").toUpperCase()
-            : "";
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
     }
 
     $(".user-profile span").text(userName);
     $(".user-avatar").text(getInitials(userName));
     $(".welcome-title").html(`<i class="fas fa-ticket-alt"></i> Welcome, ${userName}!`);
 
-    // =====================================================
-    // 🔹 EVENTS SECTION
-    // =====================================================
-
+    // 🔹 Load Events from backend
     function loadEvents() {
         $.ajax({
             url: "http://localhost:8080/api/event/all",
@@ -41,11 +36,12 @@ $(document).ready(function () {
                 }
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error (Events):", status, error, xhr.responseText);
+                console.error("AJAX Error:", status, error, xhr.responseText);
             }
         });
     }
 
+    // 🔹 Render Events Dynamically
     function renderEvents(events) {
         const $grid = $("#eventsGrid");
         $grid.empty();
@@ -57,9 +53,21 @@ $(document).ready(function () {
         hideEmptyState();
 
         events.forEach((event, index) => {
-            const price = event.tickets && event.tickets.length > 0 ? event.tickets[0].price : 0;
+            const price = event.tickets?.[0]?.price || 0;
             const priceText = price === 0 ? "FREE" : "RS." + price;
-            const registeredCount = event.registrations ? event.registrations.length : 0;
+            const registeredCount = event.registrations?.length || 0;
+
+            const safeEvent = {
+                id: event.id,
+                title: event.title,
+                category: event.category,
+                eventDate: event.eventDate,
+                eventTime: event.eventTime,
+                location: event.location,
+                description: event.description,
+                maxAttendees: event.maxAttendees,
+                tickets: event.tickets
+            };
 
             const card = `
                 <div class="event-card" data-category="${event.category}" data-price="${price}">
@@ -86,7 +94,7 @@ $(document).ready(function () {
                         </div>
                     </div>
                     <div class="event-actions">
-                        <button class="btn btn-success btn-sm" onclick='registerForEvent(${JSON.stringify(event)})'>
+                        <button class="btn btn-success btn-sm" onclick='registerForEvent(${JSON.stringify(safeEvent)})'>
                             <i class="fas fa-ticket-alt"></i> Register
                         </button>
                         <button class="btn btn-info btn-sm" onclick="viewEventDetails('${event.title}')">
@@ -103,10 +111,7 @@ $(document).ready(function () {
         });
     }
 
-    // =====================================================
-    // 🔹 TICKETS SECTION
-    // =====================================================
-
+    // 🔹 Render Tickets with QR Codes & Feedback
     function loadTickets() {
         $.ajax({
             url: `http://localhost:8080/api/v1/registration/byAttendeeId/${userId}`,
@@ -120,7 +125,7 @@ $(document).ready(function () {
                 }
             },
             error: function (xhr, status, error) {
-                console.error("AJAX Error (Tickets):", status, error, xhr.responseText);
+                console.error("AJAX Error:", status, error, xhr.responseText);
             }
         });
     }
@@ -137,56 +142,112 @@ $(document).ready(function () {
         tickets.forEach(ticket => {
             const statusClass = (ticket.status || "").toLowerCase();
 
+            // Construct QR code URL from backend
+            const qrUrl = ticket.qrCodeFileName 
+                ? `http://localhost:8080/qrcodes/${ticket.qrCodeFileName}` 
+                : "";
+
+            const eventDate = ticket.event?.eventDate || "";
+
             const card = `
                 <div class="ticket-card">
                     <div class="ticket-header">
-                        <div class="ticket-id">#${ticket.ticketId || ticket.id}</div>
-                        <div class="ticket-status ${statusClass}">${ticket.status || "PENDING"}</div>
+                        <div class="ticket-id">#${ticket.ticketId}</div>
+                        <div class="ticket-status ${statusClass}">${ticket.status}</div>
                     </div>
-                    <h3 class="event-title">${ticket.eventTitle || ""}</h3>
+                    <h3 class="event-title">${ticket.event?.title || "N/A"}</h3>
                     <div class="event-meta">
-                        <span><i class="fas fa-calendar"></i> ${ticket.eventDate || ""}</span>
-                        <span><i class="fas fa-map-marker-alt"></i> ${ticket.location || ""}</span>
+                        <span><i class="fas fa-calendar"></i> ${eventDate}</span>
+                        <span><i class="fas fa-map-marker-alt"></i> ${ticket.event?.location || ""}</span>
                     </div>
                     <div class="qr-section">
-                        ${
-                            ticket.status === "CONFIRMED"
-                                ? `<img src="${ticket.qrCode}" alt="QR Code" class="qr-image"/>`
-                                : `<p style="color:#666;font-size:14px;">QR code will be generated upon payment confirmation</p>`
+                        ${qrUrl 
+                            ? `<img src="${qrUrl}" alt="QR Code" class="qr-image"/>
+                               <div class="qr-instruction">Show this QR code at the event entrance</div>`
+                            : `<p>QR code not available</p>`
                         }
                     </div>
+                    ${new Date(eventDate) < new Date() 
+                        ? `<div class="feedback-section">
+                               <textarea id="feedback-${ticket.ticketId}" class="feedback-input" placeholder="Write your feedback..."></textarea>
+                               <button class="btn btn-primary btn-sm" onclick="sendFeedback(${ticket.ticketId}, ${ticket.event?.id})">
+                                   <i class="fas fa-paper-plane"></i> Send Feedback
+                               </button>
+                           </div>`
+                        : ""
+                    }
                 </div>
             `;
             $grid.append(card);
         });
     }
 
-    // =====================================================
-    // 🔹 FILTERS & UTILITIES
-    // =====================================================
+    // 🔹 Send Feedback
+    window.sendFeedback = function (ticketId, eventId) {
+        const feedbackText = $(`#feedback-${ticketId}`).val().trim();
+        if (!feedbackText) {
+            alert("Please enter feedback before submitting!");
+            return;
+        }
 
+        $.ajax({
+            url: "http://localhost:8080/api/feedback",
+            method: "POST",
+            headers: { "Authorization": "Bearer " + authToken, "Content-Type": "application/json" },
+            data: JSON.stringify({
+                eventId: eventId,
+                attendeeId: userId,
+                feedback: feedbackText
+            }),
+            success: function (response) {
+                if (response.code === 200) {
+                    alert("Feedback submitted successfully!");
+                    $(`#feedback-${ticketId}`).val("");
+                } else {
+                    alert("Failed to submit feedback: " + response.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Feedback AJAX Error:", status, error, xhr.responseText);
+                alert("Error while submitting feedback.");
+            }
+        });
+    };
+
+    // 🔹 Global Functions
+    window.registerForEvent = function (eventObj) {
+        if (!eventObj?.id) {
+            alert("Cannot proceed: invalid event data.");
+            return;
+        }
+        localStorage.setItem("selectedEvent", JSON.stringify(eventObj));
+        window.location.href = "../Pages/registration.html";
+    };
+
+    window.viewEventDetails = function (eventName) {
+        alert(`Opening detailed view for: ${eventName}`);
+    };
+
+    // 🔹 Filters
     function applyFilters() {
-        const searchTerm = ($("#searchInput").val() || "").toLowerCase();
+        const searchTerm = $("#searchInput").val().toLowerCase();
         const category = $("#categoryFilter").val();
         const sortBy = $("#sortFilter").val();
 
         let filteredEvents = eventsData.filter(event => {
-            const matchesSearch = !searchTerm || (event.title || "").toLowerCase().includes(searchTerm);
+            const matchesSearch = !searchTerm || event.title.toLowerCase().includes(searchTerm);
             const matchesCategory = !category || event.category === category;
             return matchesSearch && matchesCategory;
         });
 
         if (sortBy === "price") {
-            filteredEvents.sort((a, b) => {
-                const priceA = a.tickets?.[0]?.price || 0;
-                const priceB = b.tickets?.[0]?.price || 0;
-                return priceA - priceB;
-            });
+            filteredEvents.sort((a, b) => (a.tickets?.[0]?.price || 0) - (b.tickets?.[0]?.price || 0));
         }
 
         renderEvents(filteredEvents);
     }
 
+    // 🔹 Empty State
     function showEmptyState() {
         const $eventsGrid = $("#eventsGrid");
         if ($(".empty-state").length === 0) {
@@ -201,37 +262,9 @@ $(document).ready(function () {
             `);
         }
     }
+    function hideEmptyState() { $(".empty-state").remove(); }
 
-    function hideEmptyState() {
-        $(".empty-state").remove();
-    }
-
-    // =====================================================
-    // 🔹 GLOBAL FUNCTIONS
-    // =====================================================
-
-    window.registerForEvent = function (eventObj) {
-        localStorage.setItem("selectedEvent", JSON.stringify(eventObj));
-        window.location.href = "../pages/registration.html";
-    };
-
-    window.viewEventDetails = function (eventName) {
-        alert(`Opening detailed view for: ${eventName}`);
-    };
-
-    window.logout = function () {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("userRole");
-        localStorage.removeItem("userName");
-        localStorage.removeItem("userId");
-        localStorage.removeItem("userEmail");
-        window.location.href = "../login.html";
-    };
-
-    // =====================================================
-    // 🔹 EVENT BINDINGS
-    // =====================================================
-
+    // 🔹 Search & Filters
     let searchTimer;
     $("#searchInput").on("input", function () {
         clearTimeout(searchTimer);
@@ -239,10 +272,13 @@ $(document).ready(function () {
     });
     $("#categoryFilter, #sortFilter").on("change", applyFilters);
 
-    // =====================================================
-    // 🔹 INITIAL LOAD
-    // =====================================================
+    // 🔹 Logout
+    window.logout = function () {
+        localStorage.clear();
+        window.location.href = "../login.html";
+    };
 
+    // Load data
     loadEvents();
     loadTickets();
 });

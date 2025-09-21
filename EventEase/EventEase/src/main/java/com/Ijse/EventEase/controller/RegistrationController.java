@@ -8,6 +8,7 @@ import com.Ijse.EventEase.exception.RegistrationNotFoundException;
 import com.Ijse.EventEase.exception.UserNotFoundException;
 import com.Ijse.EventEase.service.RegistrationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/registration")
 @CrossOrigin
+@Slf4j
 
 public class RegistrationController {
     private final RegistrationService registrationService;
