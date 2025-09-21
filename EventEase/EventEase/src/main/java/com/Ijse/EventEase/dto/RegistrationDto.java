@@ -13,10 +13,14 @@ import java.time.LocalDateTime;
 
 public class RegistrationDto {
     private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String ticketType;
+    private String paymentMethode;
+    private double amount;
     private long attendeeId;
     private long eventId;
-    private LocalDateTime registrationTime;
-    private String qrCodePath;
-    private boolean emailSent;
-    private boolean whatsappSent;
+
 }

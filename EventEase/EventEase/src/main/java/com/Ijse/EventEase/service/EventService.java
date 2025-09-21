@@ -15,4 +15,8 @@ public interface EventService {
     ApiResponce getOrganizerEventBYDate(LocalDate date,String email) throws Exception, EventNotFoundException;
     ApiResponce getAllEventBYDate(LocalDate date) throws Exception, EventNotFoundException;
     ApiResponce countEventsByOrganizerEmail(String email) throws Exception, EventNotFoundException;
+    ApiResponce getAllEvents() throws Exception, EventNotFoundException;
+    ApiResponce findEventById(Long eventId) throws Exception, EventNotFoundException;
+    ApiResponce findEventsByOrganizerId(Long userId) throws Exception, EventNotFoundException;
+    ApiResponce getStatisticsByOrganizerId(Long userId) throws Exception, EventNotFoundException;
 }

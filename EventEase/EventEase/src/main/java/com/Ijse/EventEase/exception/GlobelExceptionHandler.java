@@ -37,5 +37,13 @@ public class GlobelExceptionHandler {
     public ApiResponce handleNotFoundException(Exception e) {
         return new ApiResponce(404, e.getMessage(), false);
     }
+    @ExceptionHandler(UserNotFoundException.class)
+    public ApiResponce handleUserNotFoundException(Exception e) {
+        return new ApiResponce(404, e.getMessage(), false);
+    }
+    @ExceptionHandler(RegistrationNotFoundException.class)
+    public ApiResponce handleRegistrationNotFoundException(Exception e) {
+        return new ApiResponce(404, e.getMessage(), false);
+    }
 
 }

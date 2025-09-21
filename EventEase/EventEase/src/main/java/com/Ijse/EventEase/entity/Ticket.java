@@ -1,5 +1,6 @@
 package com.Ijse.EventEase.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,8 +28,10 @@ public class Ticket {
 
     @ElementCollection
     private List<String> benefits;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "event_id")
+    @JsonBackReference
     private Event event;
+
+
 }

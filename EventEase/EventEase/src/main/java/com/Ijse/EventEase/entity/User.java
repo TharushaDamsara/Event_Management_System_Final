@@ -1,6 +1,7 @@
 package com.Ijse.EventEase.entity;
 
 import com.Ijse.EventEase.enums.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,7 @@ public class User {
     private Role role; // ORGANIZER / ATTENDEE
 
     @OneToMany(mappedBy = "attendee")
+    @JsonIgnore
     private List<Registration> registrations;
 
     @OneToMany(mappedBy = "attendee")

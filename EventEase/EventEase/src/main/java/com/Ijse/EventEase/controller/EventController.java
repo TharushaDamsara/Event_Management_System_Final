@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @RestController
 @RequestMapping("/api/event")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin
 public class EventController {
 
     private final EventService eventService;
@@ -54,7 +54,7 @@ public class EventController {
         }
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/eventbyemail/{email}")
     public ResponseEntity<ApiResponce> getEventByEmail(@PathVariable String email) {
         try {
             ApiResponce response = eventService.getEventBYEmail(email);
@@ -101,4 +101,49 @@ public class EventController {
                     .body(new ApiResponce(404, e.getMessage(), false));
         }
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponce> getAllEvents() {
+        try {
+            ApiResponce response = eventService.getAllEvents();
+            return ResponseEntity.ok(response);
+        } catch (Exception | EventNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
+        }
+    }
+
+    @GetMapping("/eventbyid/{eventId}")
+    public ResponseEntity<ApiResponce> getEventById(@PathVariable Long eventId) {
+        try {
+            ApiResponce response = eventService.findEventById(eventId);
+            return ResponseEntity.ok(response);
+        } catch (Exception | EventNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
+        }
+    }
+
+    @GetMapping("/eventbyorganizerid/{userId}")
+    public ResponseEntity<ApiResponce> getEventsByOrganizerId(@PathVariable Long userId) {
+        try {
+            ApiResponce response = eventService.findEventsByOrganizerId(userId);
+            return ResponseEntity.ok(response);
+        } catch (Exception | EventNotFoundException e) {
+            return ResponseEntity.status(404)
+                    .body(new ApiResponce(404, e.getMessage(), false));
+        }
+    }
+    @GetMapping("/statistics/{userId}")
+    public ResponseEntity<ApiResponce> getStatisticsByOrganizerId(@PathVariable Long userId) {
+        try {
+            ApiResponce response = eventService.getStatisticsByOrganizerId(userId);
+            return ResponseEntity.ok(response);
+        } catch (EventNotFoundException e) {
+            return ResponseEntity.status(404).body(new ApiResponce(404, e.getMessage(), false));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(new ApiResponce(500, e.getMessage(), false));
+        }
+    }
+
 }

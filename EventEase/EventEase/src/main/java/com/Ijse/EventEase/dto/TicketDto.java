@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 public class TicketDto {
 
-    private Long id; // optional, DB-generated
 
     @NotBlank(message = "Ticket name is required")
     private String name;

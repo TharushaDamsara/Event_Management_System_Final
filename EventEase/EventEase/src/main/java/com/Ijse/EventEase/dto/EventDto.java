@@ -14,11 +14,15 @@ import java.util.List;
 @Data
 public class EventDto {
 
-    private Long id; // for updates
+
 
     @NotBlank(message = "Title is required")
     @Size(max = 100)
     private String title;
+
+    @NotBlank(message = "Category is required")
+    @Size(max = 50)
+    private String category;
 
     @NotBlank(message = "Description is required")
     @Size(max = 500)

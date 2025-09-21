@@ -1,5 +1,6 @@
 package com.Ijse.EventEase.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,10 +23,12 @@ public class Feedback {
     private Long id;
 
     @ManyToOne
+    @JsonIgnoreProperties("feedbacks")
     @JoinColumn(name = "attendee_id", nullable = false)
     private User attendee;
 
     @ManyToOne
+    @JsonIgnoreProperties("feedbacks")
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
