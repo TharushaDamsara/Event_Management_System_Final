@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Event Registration</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/registration.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="floating-shape shape1"></div>
+        <div class="floating-shape shape2"></div>
+        <div class="floating-shape shape3"></div>
+    </div>
+
+    <div class="registration-container">
+        <button class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i>
+        </button>
+
+        <!-- Header Section -->
+        <div class="registration-header">
+            <div class="event-banner">
+                <div class="event-category-badge">Conference</div>
+                <div class="event-price-badge paid">$50</div>
+                <div class="event-icon">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+            </div>
+            
+            <h1 class="registration-title">AI & Machine Learning Summit 2025</h1>
+            <p class="registration-subtitle">Complete your registration to secure your spot</p>
+            
+            <div class="event-details">
+                <div class="event-detail">
+                    <i class="fas fa-calendar"></i>
+                    <span>August 15, 2025</span>
+                </div>
+                <div class="event-detail">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Tech Center, San Francisco</span>
+                </div>
+                <div class="event-detail">
+                    <i class="fas fa-clock"></i>
+                    <span>8 hours</span>
+                </div>
+                <div class="event-detail">
+                    <i class="fas fa-users"></i>
+                    <span>89/150 registered</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Steps -->
+        <div class="registration-steps">
+            <div class="step active" id="step1">
+                <div>
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Personal Info</div>
+                </div>
+            </div>
+            <div class="step" id="step2">
+                <div>
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Ticket Type</div>
+                </div>
+            </div>
+            <div class="step" id="step3">
+                <div>
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Payment</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Form -->
+        <form id="registrationForm">
+            <!-- Step 1: Personal Information -->
+            <div class="form-section active" id="section1">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    Personal Information
+                </h2>
+                
+                <div class="form-grid">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                First Name <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="firstName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Last Name <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="lastName" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Email Address <span class="required">*</span>
+                            </label>
+                            <input type="email" class="form-input" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                Phone Number <span class="required">*</span>
+                            </label>
+                            <input type="tel" class="form-input" id="phone" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Organization/Company</label>
+                            <input type="text" class="form-input" id="organization">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Job Title</label>
+                            <input type="text" class="form-input" id="jobTitle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2: Ticket Selection -->
+            <div class="form-section" id="section2">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-ticket-alt"></i>
+                    </div>
+                    Select Your Ticket Type
+                </h2>
+                
+                <div class="ticket-options">
+                    <div class="ticket-option" onclick="selectTicket('early-bird', 45, this)">
+                        <div class="ticket-header">
+                            <div class="ticket-name">Early Bird</div>
+                            <div class="ticket-price">$45</div>
+                        </div>
+                        <div class="ticket-description">
+                            Perfect for early registrants. Includes all main sessions and networking lunch.
+                        </div>
+                        <div class="ticket-features">
+                            <span class="ticket-feature">All Sessions</span>
+                            <span class="ticket-feature">Lunch Included</span>
+                            <span class="ticket-feature">Networking Access</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-option" onclick="selectTicket('regular', 50, this)">
+                        <div class="ticket-header">
+                            <div class="ticket-name">Regular</div>
+                            <div class="ticket-price">$50</div>
+                        </div>
+                        <div class="ticket-description">
+                            Standard registration with access to all sessions, materials, and refreshments.
+                        </div>
+                        <div class="ticket-features">
+                            <span class="ticket-feature">All Sessions</span>
+                            <span class="ticket-feature">Lunch Included</span>
+                            <span class="ticket-feature">Digital Materials</span>
+                            <span class="ticket-feature">Certificate</span>
+                        </div>
+                    </div>
+                    
+                    <div class="ticket-option" onclick="selectTicket('vip', 85, this)">
+                        <div class="ticket-header">
+                            <div class="ticket-name">VIP Experience</div>
+                            <div class="ticket-price">$85</div>
+                        </div>
+                        <div class="ticket-description">
+                            Premium experience with exclusive workshops, priority seating, and special perks.
+                        </div>
+                        <div class="ticket-features">
+                            <span class="ticket-feature">All Sessions</span>
+                            <span class="ticket-feature">VIP Lunch</span>
+                            <span class="ticket-feature">Exclusive Workshops</span>
+                            <span class="ticket-feature">Priority Seating</span>
+                            <span class="ticket-feature">Swag Bag</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 3: Payment -->
+            <div class="form-section" id="section3">
+                <h2 class="section-title">
+                    <div class="section-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    Payment Information
+                </h2>
+                
+                <!-- Payment Summary -->
+                <div class="payment-summary">
+                    <div class="summary-row">
+                        <span>Ticket Type:</span>
+                        <span id="selectedTicketName">Not selected</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Base Price:</span>
+                        <span id="basePrice">$0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Processing Fee:</span>
+                        <span id="processingFee">$2.50</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total Amount:</span>
+                        <span id="totalAmount">$0</span>
+                    </div>
+                </div>
+                
+                <!-- Payment Methods -->
+                <div class="form-group">
+                    <label class="form-label">Select Payment Method</label>
+                    <div class="payment-methods">
+                        <div class="payment-method" onclick="selectPayment('card', this)">
+                            <div class="payment-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div class="payment-name">Credit Card</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('paypal', this)">
+                            <div class="payment-icon">
+                                <i class="fab fa-paypal"></i>
+                            </div>
+                            <div class="payment-name">PayPal</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('apple', this)">
+                            <div class="payment-icon">
+                                <i class="fab fa-apple-pay"></i>
+                            </div>
+                            <div class="payment-name">Apple Pay</div>
+                        </div>
+                        <div class="payment-method" onclick="selectPayment('google', this)">
+                            <div class="payment-icon">
+                                <i class="fab fa-google-pay"></i>
+                            </div>
+                            <div class="payment-name">Google Pay</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Credit Card Form -->
+                <div id="cardForm" style="display: none;">
+                    <div class="form-row">
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">
+                                Card Number <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                Expiry Date <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">
+                                CVC <span class="required">*</span>
+                            </label>
+                            <input type="text" class="form-input" id="cvc" placeholder="123" maxlength="4">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">
+                            Cardholder Name <span class="required">*</span>
+                        </label>
+                        <input type="text" class="form-input" id="cardholderName">
+                    </div>
+                </div>
+                
+                <!-- Terms and Conditions -->
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <label class="checkbox-custom">
+                            <input type="checkbox" id="termsAccept" required>
+                            <span class="checkmark"></span>
+                        </label>
+                        <div>
+                            <strong>I agree to the <a href="#" style="color: #667eea; text-decoration: none;">Terms and Conditions</a> <span class="required">*</span></strong>
+                            <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                                Please read and accept our terms of service and cancellation policy
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="checkbox-item">
+                        <label class="checkbox-custom">
+                            <input type="checkbox" id="newsletter">
+                            <span class="checkmark"></span>
+                        </label>
+                        <div>
+                            <strong>Subscribe to event updates</strong>
+                            <div style="color: #666; font-size: 14px; margin-top: 5px;">
+                                Receive notifications about future events and updates
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Section -->
+            <div class="success-section" id="successSection">
+                <div class="success-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h2 class="success-title">Registration Successful!</h2>
+                <p class="success-message">
+                    Thank you for registering for the AI & Machine Learning Summit 2025. 
+                    Your ticket has been confirmed and a confirmation email has been sent to your registered email address.
+                </p>
+                
+                <div class="ticket-info">
+                    <h3 style="color: #333; margin-bottom: 20px; font-size: 1.2rem;">
+                        <i class="fas fa-ticket-alt" style="color: #667eea; margin-right: 10px;"></i>
+                        Your Ticket Information
+                    </h3>
+                    <div style="display: grid; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Ticket ID:</span>
+                            <strong id="ticketId">#AI2025-001248</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Event:</span>
+                            <strong>AI & Machine Learning Summit 2025</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Date:</span>
+                            <strong>August 15, 2025</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Ticket Type:</span>
+                            <strong id="finalTicketType">Regular</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Amount Paid:</span>
+                            <strong id="finalAmount">$52.50</strong>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: center; margin-top: 30px; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="downloadTicket()">
+                        <i class="fas fa-download"></i>
+                        <span class="btn-text">Download Ticket</span>
+                    </button>
+                    <button class="btn btn-secondary" onclick="goToDashboard()">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span class="btn-text">Go to Dashboard</span>
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Form Navigation -->
+        <div class="form-navigation" id="formNavigation">
+            <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">
+                <i class="fas fa-arrow-left"></i>
+                <span class="btn-text">Previous</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
+                <span class="btn-text">Next Step</span>
+                <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script src="../js/registration.js"></script>
+</body>
+</html>
