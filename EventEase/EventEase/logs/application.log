@@ -4491,3 +4491,66 @@ Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attri
 2025-09-21T20:12:47.858+05:30 DEBUG 36880 --- [EventEase] [http-nio-8080-exec-5] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
 2025-09-21T20:12:47.859+05:30 DEBUG 36880 --- [EventEase] [http-nio-8080-exec-5] org.hibernate.SQL                        : select t1_0.event_id,t1_0.id,t1_0.description,t1_0.name,t1_0.price,t1_0.quantity from tickets t1_0 where t1_0.event_id=?
 2025-09-21T20:12:47.861+05:30 DEBUG 36880 --- [EventEase] [http-nio-8080-exec-5] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:19:03.154+05:30  INFO 36880 --- [EventEase] [SpringApplicationShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2025-09-21T20:19:03.173+05:30  INFO 36880 --- [EventEase] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2025-09-21T20:19:03.189+05:30  INFO 36880 --- [EventEase] [SpringApplicationShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-21T20:19:03.198+05:30  INFO 36880 --- [EventEase] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-09-21T20:19:03.206+05:30  INFO 36880 --- [EventEase] [SpringApplicationShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-09-21T20:19:07.352+05:30  INFO 5800 --- [EventEase] [main] c.Ijse.EventEase.EventEaseApplication    : Starting EventEaseApplication using Java 24.0.1 with PID 5800 (C:\local disk D\Edu\project\Event_Management_System_Final\EventEase\EventEase\target\classes started by tharusha in C:\local disk D\Edu\project\Event_Management_System_Final\EventEase\EventEase)
+2025-09-21T20:19:07.353+05:30  INFO 5800 --- [EventEase] [main] c.Ijse.EventEase.EventEaseApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-09-21T20:19:07.831+05:30  INFO 5800 --- [EventEase] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-21T20:19:07.879+05:30  INFO 5800 --- [EventEase] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 41 ms. Found 5 JPA repository interfaces.
+2025-09-21T20:19:08.236+05:30  INFO 5800 --- [EventEase] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-09-21T20:19:08.246+05:30  INFO 5800 --- [EventEase] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-09-21T20:19:08.246+05:30  INFO 5800 --- [EventEase] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.43]
+2025-09-21T20:19:08.277+05:30  INFO 5800 --- [EventEase] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-09-21T20:19:08.277+05:30  INFO 5800 --- [EventEase] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 889 ms
+2025-09-21T20:19:08.361+05:30  INFO 5800 --- [EventEase] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-21T20:19:08.397+05:30  INFO 5800 --- [EventEase] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.22.Final
+2025-09-21T20:19:08.417+05:30  INFO 5800 --- [EventEase] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-09-21T20:19:08.592+05:30  INFO 5800 --- [EventEase] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-21T20:19:08.615+05:30  INFO 5800 --- [EventEase] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-09-21T20:19:08.860+05:30  INFO 5800 --- [EventEase] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4a890fdd
+2025-09-21T20:19:08.861+05:30  INFO 5800 --- [EventEase] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-09-21T20:19:08.899+05:30  WARN 5800 --- [EventEase] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-21T20:19:08.909+05:30  INFO 5800 --- [EventEase] [main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.39
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-09-21T20:19:09.607+05:30  INFO 5800 --- [EventEase] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-21T20:19:09.651+05:30 DEBUG 5800 --- [EventEase] [main] org.hibernate.SQL                        : alter table users modify column role enum ('ATTENDEE','ORGANIZER') not null
+2025-09-21T20:19:09.723+05:30  INFO 5800 --- [EventEase] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-21T20:19:09.992+05:30  INFO 5800 --- [EventEase] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-21T20:19:10.487+05:30  WARN 5800 --- [EventEase] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-21T20:19:10.513+05:30  INFO 5800 --- [EventEase] [main] eAuthenticationProviderManagerConfigurer : Global AuthenticationManager configured with AuthenticationProvider bean with name authenticationProvider
+2025-09-21T20:19:10.513+05:30  WARN 5800 --- [EventEase] [main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2025-09-21T20:19:10.879+05:30  INFO 5800 --- [EventEase] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-09-21T20:19:10.884+05:30  INFO 5800 --- [EventEase] [main] c.Ijse.EventEase.EventEaseApplication    : Started EventEaseApplication in 3.845 seconds (process running for 4.217)
+2025-09-21T20:23:53.159+05:30  INFO 5800 --- [EventEase] [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-21T20:23:53.160+05:30  INFO 5800 --- [EventEase] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-09-21T20:23:53.161+05:30  INFO 5800 --- [EventEase] [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-09-21T20:23:53.462+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select e1_0.id,e1_0.category,e1_0.description,e1_0.event_date,e1_0.event_time,e1_0.location,e1_0.max_attendees,e1_0.organizer_id,e1_0.title from events e1_0
+2025-09-21T20:23:53.462+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select r1_0.id,r1_0.amount,r1_0.attendee_id,r1_0.email,r1_0.email_sent,r1_0.event_id,r1_0.first_name,r1_0.last_name,r1_0.payment_methode,r1_0.phone,r1_0.qr_code_path,r1_0.registration_time,r1_0.ticket_type,r1_0.whatsapp_sent from registrations r1_0 left join users a1_0 on a1_0.id=r1_0.attendee_id where a1_0.id=?
+2025-09-21T20:23:53.543+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from users u1_0 where u1_0.id=?
+2025-09-21T20:23:53.547+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from users u1_0 where u1_0.id=?
+2025-09-21T20:23:53.560+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select e1_0.id,e1_0.category,e1_0.description,e1_0.event_date,e1_0.event_time,e1_0.location,e1_0.max_attendees,o1_0.id,o1_0.email,o1_0.name,o1_0.password,o1_0.role,e1_0.title from events e1_0 left join users o1_0 on o1_0.id=e1_0.organizer_id where e1_0.id=?
+2025-09-21T20:23:53.569+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select u1_0.id,u1_0.email,u1_0.name,u1_0.password,u1_0.role from users u1_0 where u1_0.id=?
+2025-09-21T20:23:53.705+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select f1_0.attendee_id,f1_0.id,f1_0.comment,f1_0.event_id,e1_0.id,e1_0.category,e1_0.description,e1_0.event_date,e1_0.event_time,e1_0.location,e1_0.max_attendees,o1_0.id,o1_0.email,o1_0.name,o1_0.password,o1_0.role,e1_0.title,f1_0.rating,f1_0.submitted_at from feedbacks f1_0 left join events e1_0 on e1_0.id=f1_0.event_id left join users o1_0 on o1_0.id=e1_0.organizer_id where f1_0.attendee_id=?
+2025-09-21T20:23:53.705+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select t1_0.event_id,t1_0.id,t1_0.description,t1_0.name,t1_0.price,t1_0.quantity from tickets t1_0 where t1_0.event_id=?
+2025-09-21T20:23:53.710+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select t1_0.event_id,t1_0.id,t1_0.description,t1_0.name,t1_0.price,t1_0.quantity from tickets t1_0 where t1_0.event_id=?
+2025-09-21T20:23:53.721+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.721+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.723+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.726+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.726+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.728+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-6] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.728+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select t1_0.event_id,t1_0.id,t1_0.description,t1_0.name,t1_0.price,t1_0.quantity from tickets t1_0 where t1_0.event_id=?
+2025-09-21T20:23:53.731+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.733+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select t1_0.event_id,t1_0.id,t1_0.description,t1_0.name,t1_0.price,t1_0.quantity from tickets t1_0 where t1_0.event_id=?
+2025-09-21T20:23:53.738+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?
+2025-09-21T20:23:53.740+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select t1_0.event_id,t1_0.id,t1_0.description,t1_0.name,t1_0.price,t1_0.quantity from tickets t1_0 where t1_0.event_id=?
+2025-09-21T20:23:53.742+05:30 DEBUG 5800 --- [EventEase] [http-nio-8080-exec-2] org.hibernate.SQL                        : select b1_0.ticket_id,b1_0.benefits from ticket_benefits b1_0 where b1_0.ticket_id=?

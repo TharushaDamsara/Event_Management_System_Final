@@ -111,7 +111,7 @@ $(document).ready(function () {
         });
     }
 
-    // 🔹 Render Tickets with QR Codes & Feedback
+    // 🔹 Render Tickets with QR Codes
     function loadTickets() {
         $.ajax({
             url: `http://localhost:8080/api/v1/registration/byAttendeeId/${userId}`,
@@ -142,43 +142,31 @@ $(document).ready(function () {
         tickets.forEach(ticket => {
             const statusClass = (ticket.status || "").toLowerCase();
 
-            // Construct QR code URL from backend
-            const qrUrl = ticket.qrCodeFileName 
-                ? `http://localhost:8080/qrcodes/${ticket.qrCodeFileName}` 
-                : "";
-
-            const eventDate = ticket.event?.eventDate || "";
-
-            const card = `
+            const card = $(`
                 <div class="ticket-card">
                     <div class="ticket-header">
                         <div class="ticket-id">#${ticket.ticketId}</div>
                         <div class="ticket-status ${statusClass}">${ticket.status}</div>
                     </div>
-                    <h3 class="event-title">${ticket.event?.title || "N/A"}</h3>
+                    <h3 class="event-title">${ticket.event.title}</h3>
                     <div class="event-meta">
-                        <span><i class="fas fa-calendar"></i> ${eventDate}</span>
-                        <span><i class="fas fa-map-marker-alt"></i> ${ticket.event?.location || ""}</span>
+                        <span><i class="fas fa-calendar"></i> ${ticket.event.eventDate}</span>
+                        <span><i class="fas fa-map-marker-alt"></i> ${ticket.event.location}</span>
                     </div>
-                    <div class="qr-section">
-                        ${qrUrl 
-                            ? `<img src="${qrUrl}" alt="QR Code" class="qr-image"/>
-                               <div class="qr-instruction">Show this QR code at the event entrance</div>`
-                            : `<p>QR code not available</p>`
-                        }
-                    </div>
-                    ${new Date(eventDate) < new Date() 
-                        ? `<div class="feedback-section">
-                               <textarea id="feedback-${ticket.ticketId}" class="feedback-input" placeholder="Write your feedback..."></textarea>
-                               <button class="btn btn-primary btn-sm" onclick="sendFeedback(${ticket.ticketId}, ${ticket.event?.id})">
-                                   <i class="fas fa-paper-plane"></i> Send Feedback
-                               </button>
-                           </div>`
-                        : ""
-                    }
+                    <div class="qr-section" id="qr-${ticket.ticketId}"></div>
                 </div>
-            `;
+            `);
+
             $grid.append(card);
+
+            // Generate QR code dynamically
+            new QRCode(document.getElementById(`qr-${ticket.ticketId}`), {
+                text: `TicketID:${ticket.ticketId}|Event:${ticket.event.title}`,
+                width: 150,
+                height: 150,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+            });
         });
     }
 
@@ -193,7 +181,10 @@ $(document).ready(function () {
         $.ajax({
             url: "http://localhost:8080/api/feedback",
             method: "POST",
-            headers: { "Authorization": "Bearer " + authToken, "Content-Type": "application/json" },
+            headers: { 
+                "Authorization": "Bearer " + authToken,
+                "Content-Type": "application/json" 
+            },
             data: JSON.stringify({
                 eventId: eventId,
                 attendeeId: userId,
@@ -278,7 +269,7 @@ $(document).ready(function () {
         window.location.href = "../login.html";
     };
 
-    // Load data
+    // 🔹 Load initial data
     loadEvents();
     loadTickets();
 });
