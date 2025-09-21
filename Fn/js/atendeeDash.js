@@ -31,6 +31,7 @@ $(document).ready(function () {
                 if (response.code === 200) {
                     eventsData = response.data;
                     renderEvents(eventsData);
+                    populateFeedbackDropdown(eventsData); // Populate feedback dropdown
                 } else {
                     console.error("Failed to load events:", response.message);
                 }
@@ -111,6 +112,17 @@ $(document).ready(function () {
         });
     }
 
+    // 🔹 Populate feedback dropdown dynamically
+    function populateFeedbackDropdown(events) {
+        const $feedbackSelect = $("#feedbackEvent");
+        $feedbackSelect.empty();
+        $feedbackSelect.append(`<option value="">Select an event...</option>`);
+
+        events.forEach(event => {
+            $feedbackSelect.append(`<option value="${event.id}">${event.title}</option>`);
+        });
+    }
+
     // 🔹 Render Tickets with QR Codes
     function loadTickets() {
         $.ajax({
@@ -142,7 +154,7 @@ $(document).ready(function () {
         tickets.forEach(ticket => {
             const statusClass = (ticket.status || "").toLowerCase();
 
-            const card = $(`
+            const card = $(` 
                 <div class="ticket-card">
                     <div class="ticket-header">
                         <div class="ticket-id">#${ticket.ticketId}</div>
@@ -171,39 +183,47 @@ $(document).ready(function () {
     }
 
     // 🔹 Send Feedback
-    window.sendFeedback = function (ticketId, eventId) {
-        const feedbackText = $(`#feedback-${ticketId}`).val().trim();
-        if (!feedbackText) {
-            alert("Please enter feedback before submitting!");
-            return;
-        }
+   window.submitFeedback = function () {
+    const eventId = $("#feedbackEvent").val();
+    const feedbackText = $("#feedbackText").val().trim();
 
-        $.ajax({
-            url: "http://localhost:8080/api/feedback",
-            method: "POST",
-            headers: { 
-                "Authorization": "Bearer " + authToken,
-                "Content-Type": "application/json" 
-            },
-            data: JSON.stringify({
-                eventId: eventId,
-                attendeeId: userId,
-                feedback: feedbackText
-            }),
-            success: function (response) {
-                if (response.code === 200) {
-                    alert("Feedback submitted successfully!");
-                    $(`#feedback-${ticketId}`).val("");
-                } else {
-                    alert("Failed to submit feedback: " + response.message);
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error("Feedback AJAX Error:", status, error, xhr.responseText);
-                alert("Error while submitting feedback.");
+    if (!eventId) {
+        alert("Please select an event!");
+        return;
+    }
+    if (!feedbackText) {
+        alert("Please enter feedback before submitting!");
+        return;
+    }
+
+    $.ajax({
+        url: "http://localhost:8080/api/feedback",
+        method: "POST",
+        headers: { 
+            "Authorization": "Bearer " + localStorage.getItem("authToken"),
+            "Content-Type": "application/json" 
+        },
+        data: JSON.stringify({
+            eventId: eventId,
+            attendeeId: localStorage.getItem("userId"),
+            feedback: feedbackText
+        }),
+        success: function (response) {
+            if (response.code === 200) {
+                alert("Feedback submitted successfully!");
+                $("#feedbackText").val("");
+                $("#feedbackEvent").val("");
+            } else {
+                alert("Failed to submit feedback: " + response.message);
             }
-        });
-    };
+        },
+        error: function (xhr, status, error) {
+            console.error("Feedback AJAX Error:", status, error, xhr.responseText);
+            alert("Error while submitting feedback.");
+        }
+    });
+};
+
 
     // 🔹 Global Functions
     window.registerForEvent = function (eventObj) {
