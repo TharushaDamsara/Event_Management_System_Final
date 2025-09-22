@@ -44,6 +44,7 @@ $(document).ready(function () {
 
     // 🔹 Render Events Dynamically
     function renderEvents(events) {
+        
         const $grid = $("#eventsGrid");
         $grid.empty();
 
@@ -57,6 +58,7 @@ $(document).ready(function () {
             const price = event.tickets?.[0]?.price || 0;
             const priceText = price === 0 ? "FREE" : "RS." + price;
             const registeredCount = event.registrations?.length || 0;
+            console.log("event:", event);
 
             const safeEvent = {
                 id: event.id,
@@ -141,51 +143,62 @@ $(document).ready(function () {
             }
         });
     }
+function renderTickets(tickets) {
+    const $grid = $(".tickets-grid");
+    $grid.empty();
 
-    function renderTickets(tickets) {
-        const $grid = $(".tickets-grid");
-        $grid.empty();
-
-        if (!tickets || tickets.length === 0) {
-            $grid.append(`<p>No tickets available</p>`);
-            return;
-        }
-
-        tickets.forEach(ticket => {
-            const statusClass = (ticket.status || "").toLowerCase();
-
-            const card = $(` 
-                <div class="ticket-card">
-                    <div class="ticket-header">
-                        <div class="ticket-id">#${ticket.ticketId}</div>
-                        <div class="ticket-status ${statusClass}">${ticket.status}</div>
-                    </div>
-                    <h3 class="event-title">${ticket.event.title}</h3>
-                    <div class="event-meta">
-                        <span><i class="fas fa-calendar"></i> ${ticket.event.eventDate}</span>
-                        <span><i class="fas fa-map-marker-alt"></i> ${ticket.event.location}</span>
-                    </div>
-                    <div class="qr-section" id="qr-${ticket.ticketId}"></div>
-                </div>
-            `);
-
-            $grid.append(card);
-
-            // Generate QR code dynamically
-            new QRCode(document.getElementById(`qr-${ticket.ticketId}`), {
-                text: `TicketID:${ticket.ticketId}|Event:${ticket.event.title}`,
-                width: 150,
-                height: 150,
-                colorDark: "#000000",
-                colorLight: "#ffffff",
-            });
-        });
+    if (!tickets || tickets.length === 0) {
+        $grid.append(`<p>No tickets available</p>`);
+        return;
     }
+
+    tickets.forEach((ticket, index) => {
+        const statusClass = (ticket.status || "").toLowerCase();
+        const uniqueId = ticket.id || `temp-${index}`; // use registration id
+
+        console.log("Generating QR for ticket:", uniqueId, "Ticket data:", ticket);
+
+        const cardHtml = `
+            <div class="ticket-card">
+                <div class="ticket-header">
+                    <div class="ticket-id">#${uniqueId}</div>
+                    <div class="ticket-status ${statusClass}">${ticket.status || "Active"}</div>
+                </div>
+                <h3 class="event-title">${ticket.event.title}</h3>
+                <div class="event-meta">
+                    <span><i class="fas fa-calendar"></i> ${ticket.event.eventDate}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> ${ticket.event.location}</span>
+                </div>
+                <div class="qr-section text-center mt-3">
+                    <div class="qr-code" id="qr-${uniqueId}"></div>
+                </div>
+                <p class="qr-label">Scan to verify your ticket</p>
+            </div>
+        `;
+
+        $grid.append(cardHtml);
+
+        const qrContainer = document.getElementById(`qr-${uniqueId}`);
+        qrContainer.innerHTML = "";
+
+        new QRCode(qrContainer, {
+            text: `TicketID:${uniqueId}|Event:${ticket.event.title}|Date:${ticket.event.eventDate}|Type:${ticket.ticketType}`,
+            width: 120,
+            height: 120,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    });
+}
+
+
 
     // 🔹 Send Feedback
    window.submitFeedback = function () {
     const eventId = $("#feedbackEvent").val();
     const feedbackText = $("#feedbackText").val().trim();
+    log("Submitting feedback for eventId:", eventId, "Feedback:", feedbackText);
 
     if (!eventId) {
         alert("Please select an event!");
@@ -283,11 +296,33 @@ $(document).ready(function () {
     });
     $("#categoryFilter, #sortFilter").on("change", applyFilters);
 
-    // 🔹 Logout
-    window.logout = function () {
-        localStorage.clear();
-        window.location.href = "../login.html";
-    };
+  // 🔹 Logout
+window.logout = function () {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You will be logged out of your account.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, log me out",
+        cancelButtonText: "Cancel"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.clear();
+            Swal.fire({
+                title: "Logged Out!",
+                text: "You have been successfully logged out.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = "../index.html";
+            });
+        }
+    });
+};
+
 
     // 🔹 Load initial data
     loadEvents();
